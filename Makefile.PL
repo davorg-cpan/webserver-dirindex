@@ -8,15 +8,16 @@ WriteMakefile(
     VERSION          => '0.0.1',
     ABSTRACT_FROM    => 'lib/WebServer/DirIndex.pm',
     LICENSE          => 'perl_5',
-    MIN_PERL_VERSION => '5.038',
+    MIN_PERL_VERSION => '5.014',
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => '0',
     },
     PREREQ_PM => {
-        'DirHandle'    => '0',
-        'HTTP::Date'   => '0',
-        'Plack'        => '0',
-        'URI::Escape'  => '0',
+        'DirHandle'              => '0',
+        'Feature::Compat::Class' => '0',
+        'HTTP::Date'             => '0',
+        'Plack'                  => '0',
+        'URI::Escape'            => '0',
     },
     TEST_REQUIRES => {
         'Test::More' => '0',

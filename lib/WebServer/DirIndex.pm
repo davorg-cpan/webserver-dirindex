@@ -1,6 +1,6 @@
-use v5.38;
-use feature 'class';
-no warnings 'experimental::class';
+use strict;
+use warnings;
+use Feature::Compat::Class;
 
 class WebServer::DirIndex v0.0.1 {
 
