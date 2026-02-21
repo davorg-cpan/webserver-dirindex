@@ -156,7 +156,7 @@ Dave Cross E<lt>dave@perlhacks.comE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2020 Magnum Solutions Limited. All rights reserved.
+Copyright (c) 2026 Magnum Solutions Limited. All rights reserved.
 
 =head1 LICENCE
 
