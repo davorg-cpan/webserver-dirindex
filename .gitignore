@@ -1,0 +1,15 @@
+# Build artifacts
+Makefile
+blib/
+pm_to_blib
+MYMETA.json
+MYMETA.yml
+MANIFEST
+WebServer-DirIndex-*/
+*.tar.gz
+
+# Editor files
+*.swp
+*.bak
+*.orig
+.DS_Store
