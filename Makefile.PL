@@ -13,7 +13,7 @@ WriteMakefile(
         'ExtUtils::MakeMaker' => '0',
     },
     PREREQ_PM => {
-        'DirHandle'              => '0',
+        'Path::Tiny'             => '0',
         'Feature::Compat::Class' => '0',
         'HTTP::Date'             => '0',
         'Plack'                  => '0',
