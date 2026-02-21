@@ -4,7 +4,7 @@ use Feature::Compat::Class;
 
 class WebServer::DirIndex v0.0.1 {
 
-  use DirHandle;
+  use Path::Tiny;
   use HTTP::Date;
   use Plack::MIME;
   use URI::Escape;
@@ -17,12 +17,7 @@ class WebServer::DirIndex v0.0.1 {
   ADJUST {
     @files = ( [ '../', 'Parent Directory', '', '', '' ] );
 
-    my $dh = DirHandle->new($dir);
-    my @children;
-    while (defined(my $ent = $dh->read)) {
-      next if $ent eq '.' or $ent eq '..';
-      push @children, $ent;
-    }
+    my @children = map { $_->basename } path($dir)->children;
 
     for my $basename (sort { $a cmp $b } @children) {
       my $file = "$dir/$basename";
