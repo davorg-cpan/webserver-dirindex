@@ -9,11 +9,21 @@ class WebServer::DirIndex v0.0.1 {
 
   use Path::Tiny;
   use HTTP::Date;
-  use Plack::MIME;
-  use Plack::Util;
+  use MIME::Types;
   use URI::Escape;
   use WebServer::DirIndex::CSS;
   use WebServer::DirIndex::File;
+
+  my $mime_types = MIME::Types->new;
+
+  sub _encode_html {
+    my $str = shift;
+    $str =~ s/&/&amp;/g;
+    $str =~ s/>/&gt;/g;
+    $str =~ s/</&lt;/g;
+    $str =~ s/"/&quot;/g;
+    return $str;
+  }
 
   field $dir     :param;
   field $dir_url :param;
@@ -38,9 +48,10 @@ class WebServer::DirIndex v0.0.1 {
         $url      .= '/';
       }
 
+      my $type_obj  = $is_dir ? undef : $mime_types->mimeTypeOf($file);
       my $mime_type = $is_dir
         ? 'directory'
-        : (Plack::MIME->mime_type($file) || 'text/plain');
+        : ($type_obj ? $type_obj->type : 'text/plain');
 
       push @files, WebServer::DirIndex::File->new(
         url       => $url,
@@ -55,7 +66,7 @@ class WebServer::DirIndex v0.0.1 {
   method files { return @files }
 
   method to_html ($path_info, $pretty = 0) {
-    my $path = Plack::Util::encode_html("Index of $path_info");
+    my $path = _encode_html("Index of $path_info");
     my $files_html = join "\n", map { $_->to_html } @files;
     my $css = WebServer::DirIndex::CSS->new(pretty => $pretty)->css;
     return sprintf $html->dir_html,
