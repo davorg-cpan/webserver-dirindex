@@ -52,7 +52,7 @@ class WebServer::DirIndex v0.0.1 {
 
   method files { return @files }
 
-  method render ($path_info, $pretty = 0) {
+  method to_html ($path_info, $pretty = 0) {
     my $path = Plack::Util::encode_html("Index of $path_info");
     my $files_html = join "\n", map { $_->to_html } @files;
     my $css = WebServer::DirIndex::CSS->new(pretty => $pretty)->css;
@@ -82,7 +82,7 @@ WebServer::DirIndex - Directory index data for web server listings
   my @files = $di->files;
 
   # Generate an HTML directory index page
-  my $html = $di->render('/some/dir/', $pretty);
+  my $html = $di->to_html('/some/dir/', $pretty);
 
 =head1 DESCRIPTION
 
@@ -125,7 +125,7 @@ Returns the list of file entries for the directory. Each entry is a
 L<WebServer::DirIndex::File> object. The first entry is always the
 parent directory (C<../>).
 
-=item render($path_info, $pretty)
+=item to_html($path_info, $pretty)
 
 Generates and returns a complete HTML directory index page using
 L<WebServer::DirIndex::HTML> for templates and L<WebServer::DirIndex::CSS>

@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Moved `render()` method from `WebServer::DirIndex::HTML` to `WebServer::DirIndex`.
+- Moved `render()` method from `WebServer::DirIndex::HTML` to `WebServer::DirIndex::to_html`.
   `WebServer::DirIndex::HTML` now only provides `file_html` and `dir_html` template
   class methods; rendering is performed directly by `WebServer::DirIndex::render()`.
 - Added `to_html()` method to `WebServer::DirIndex::File` that renders a single
