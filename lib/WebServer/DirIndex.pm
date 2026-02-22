@@ -19,11 +19,10 @@ class WebServer::DirIndex v0.0.1 {
   field $dir_url    :param;
   field $html_class :param = 'WebServer::DirIndex::HTML';
   field $css_class  :param = 'WebServer::DirIndex::CSS';
+  field $_html_obj = $html_class->new;
   field @files;
-  field $_html_obj;
 
   ADJUST {
-    $_html_obj = $html_class->new;
     @files = ( WebServer::DirIndex::File->parent_dir(html_class => $html_class) );
 
     my @children = map { $_->basename } path($dir)->children;

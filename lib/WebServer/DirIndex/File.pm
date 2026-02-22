@@ -13,11 +13,7 @@ class WebServer::DirIndex::File v0.0.1 {
   field $mime_type  :param :reader;
   field $mtime      :param :reader;
   field $html_class :param = 'WebServer::DirIndex::HTML';
-  field $_html_obj;
-
-  ADJUST {
-    $_html_obj = $html_class->new;
-  }
+  field $_html_obj = $html_class->new;
 
   method to_html {
     return sprintf $_html_obj->file_html,
