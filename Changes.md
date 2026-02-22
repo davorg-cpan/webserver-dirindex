@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New `WebServer::DirIndex::File` class to encapsulate directory entry data (url, name, size, mime_type, mtime).
+
 ### Fixed
 
 - Correct copyright date.

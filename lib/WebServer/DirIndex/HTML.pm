@@ -58,7 +58,8 @@ DIR
     my $path = Plack::Util::encode_html("Index of $path_info");
     my $files_html = join "\n", map {
       my $f = $_;
-      sprintf $self->file_html, map { Plack::Util::encode_html($_) } @$f;
+      sprintf $self->file_html, map { Plack::Util::encode_html($_) }
+        ($f->url, $f->name, $f->size, $f->mime_type, $f->mtime);
     } @$files;
     my $css = WebServer::DirIndex::CSS->new(pretty => $pretty)->css;
     return sprintf $self->dir_html, $path, $css, $path, $files_html;
@@ -107,8 +108,7 @@ The request path info (e.g. C</some/dir/>). Used as the page title and heading.
 
 =item files
 
-An arrayref of file entries. Each entry is an arrayref of
-C<[$url, $name, $size, $type, $mtime]>.
+An arrayref of L<WebServer::DirIndex::File> objects.
 
 =item pretty
 
