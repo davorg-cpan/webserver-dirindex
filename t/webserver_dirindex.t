@@ -20,18 +20,18 @@ ok defined $di, 'WebServer::DirIndex->new returns an object';
 my @files = $di->files;
 ok @files > 0, 'files() returns entries';
 
-my ($parent) = grep { $_->[1] eq 'Parent Directory' } @files;
+my ($parent) = grep { $_->name eq 'Parent Directory' } @files;
 ok defined $parent, 'files() includes Parent Directory entry';
-is $parent->[0], '../', 'Parent Directory has correct URL';
+is $parent->url, '../', 'Parent Directory has correct URL';
 
-my ($file) = grep { $_->[1] eq 'file.txt' } @files;
+my ($file) = grep { $_->name eq 'file.txt' } @files;
 ok defined $file, 'files() includes file.txt';
-like $file->[0], qr{file\.txt}, 'file.txt has correct URL';
-is $file->[3], 'text/plain', 'file.txt has correct MIME type';
+like $file->url, qr{file\.txt}, 'file.txt has correct URL';
+is $file->mime_type, 'text/plain', 'file.txt has correct MIME type';
 
-my ($subdir) = grep { $_->[1] eq 'subdir/' } @files;
+my ($subdir) = grep { $_->name eq 'subdir/' } @files;
 ok defined $subdir, 'files() includes subdir/';
-is $subdir->[3], 'directory', 'subdir has correct MIME type';
+is $subdir->mime_type, 'directory', 'subdir has correct MIME type';
 
 my $html = $di->to_html('/test/', 0);
 ok defined $html, 'to_html() returns a value';

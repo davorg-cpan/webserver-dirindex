@@ -1,12 +1,25 @@
 use strict;
 use warnings;
 use Test::More;
+use WebServer::DirIndex::File;
 use WebServer::DirIndex::HTML;
 
 my @files = (
-  [ '../',     'Parent Directory', '',    '',          ''                    ],
-  [ 'file.txt','file.txt',         1234,  'text/plain','Thu, 01 Jan 2026 00:00:00 GMT'],
-  [ 'subdir/', 'subdir/',          0,     'directory', 'Thu, 01 Jan 2026 00:00:00 GMT'],
+  WebServer::DirIndex::File->parent_dir,
+  WebServer::DirIndex::File->new(
+    url       => 'file.txt',
+    name      => 'file.txt',
+    size      => 1234,
+    mime_type => 'text/plain',
+    mtime     => 'Thu, 01 Jan 2026 00:00:00 GMT',
+  ),
+  WebServer::DirIndex::File->new(
+    url       => 'subdir/',
+    name      => 'subdir/',
+    size      => 0,
+    mime_type => 'directory',
+    mtime     => 'Thu, 01 Jan 2026 00:00:00 GMT',
+  ),
 );
 
 my $html_obj = WebServer::DirIndex::HTML->new(

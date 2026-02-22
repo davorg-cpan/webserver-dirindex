@@ -8,6 +8,7 @@ class WebServer::DirIndex v0.0.1 {
   use HTTP::Date;
   use Plack::MIME;
   use URI::Escape;
+  use WebServer::DirIndex::File;
   use WebServer::DirIndex::HTML;
 
   field $dir     :param;
@@ -15,7 +16,7 @@ class WebServer::DirIndex v0.0.1 {
   field @files;
 
   ADJUST {
-    @files = ( [ '../', 'Parent Directory', '', '', '' ] );
+    @files = ( WebServer::DirIndex::File->parent_dir );
 
     my @children = map { $_->basename } path($dir)->children;
 
@@ -37,8 +38,13 @@ class WebServer::DirIndex v0.0.1 {
         ? 'directory'
         : (Plack::MIME->mime_type($file) || 'text/plain');
 
-      push @files, [ $url, $basename, $stat[7], $mime_type,
-                     HTTP::Date::time2str($stat[9]) ];
+      push @files, WebServer::DirIndex::File->new(
+        url       => $url,
+        name      => $basename,
+        size      => $stat[7],
+        mime_type => $mime_type,
+        mtime     => HTTP::Date::time2str($stat[9]),
+      );
     }
   }
 
@@ -113,9 +119,9 @@ Used to construct file URLs.
 
 =item files
 
-Returns the list of file entries for the directory. Each entry is an
-arrayref of C<[$url, $name, $size, $mime_type, $mtime]>. The first
-entry is always the parent directory (C<../>).
+Returns the list of file entries for the directory. Each entry is a
+L<WebServer::DirIndex::File> object. The first entry is always the
+parent directory (C<../>).
 
 =item to_html($path_info, $pretty)
 
@@ -142,6 +148,8 @@ the same terms as Perl itself.
 =head1 SEE ALSO
 
 =over 4
+
+=item L<WebServer::DirIndex::File>
 
 =item L<WebServer::DirIndex::HTML>
 

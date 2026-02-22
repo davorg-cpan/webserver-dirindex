@@ -1,6 +1,7 @@
 Changes.md
 lib/WebServer/DirIndex.pm
 lib/WebServer/DirIndex/CSS.pm
+lib/WebServer/DirIndex/File.pm
 lib/WebServer/DirIndex/HTML.pm
 LICENSE
 Makefile.PL
@@ -9,4 +10,5 @@ MANIFEST.SKIP
 README.md
 t/webserver_dirindex.t
 t/webserver_dirindex_css.t
+t/webserver_dirindex_file.t
 t/webserver_dirindex_html.t
