@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Feature::Compat::Class;
 
-class WebServer::DirIndex::HTML v0.0.1 {
+class WebServer::DirIndex::HTML v0.0.2 {
 
   field $file_html :reader = <<'FILE';
   <tr>

@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Feature::Compat::Class;
 
-class WebServer::DirIndex::CSS v0.0.1 {
+class WebServer::DirIndex::CSS v0.0.2 {
 
   field $pretty :param = 0;
 
