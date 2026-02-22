@@ -54,12 +54,7 @@ class WebServer::DirIndex v0.0.1 {
 
   method render ($path_info, $pretty = 0) {
     my $path = Plack::Util::encode_html("Index of $path_info");
-    my $files_html = join "\n", map {
-      my $f = $_;
-      sprintf WebServer::DirIndex::HTML->file_html,
-        map { Plack::Util::encode_html($_) }
-          ($f->url, $f->name, $f->size, $f->mime_type, $f->mtime);
-    } @files;
+    my $files_html = join "\n", map { $_->to_html } @files;
     my $css = WebServer::DirIndex::CSS->new(pretty => $pretty)->css;
     return sprintf WebServer::DirIndex::HTML->dir_html,
       $path, $css, $path, $files_html;

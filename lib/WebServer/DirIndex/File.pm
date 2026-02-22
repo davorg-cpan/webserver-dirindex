@@ -4,6 +4,9 @@ use Feature::Compat::Class;
 
 class WebServer::DirIndex::File v0.0.1 {
 
+  use Plack::Util;
+  use WebServer::DirIndex::HTML;
+
   field $url       :param;
   field $name      :param;
   field $size      :param;
@@ -15,6 +18,12 @@ class WebServer::DirIndex::File v0.0.1 {
   method size      { return $size      }
   method mime_type { return $mime_type }
   method mtime     { return $mtime     }
+
+  method to_html {
+    return sprintf WebServer::DirIndex::HTML->file_html,
+      map { Plack::Util::encode_html($_) }
+        ($url, $name, $size, $mime_type, $mtime);
+  }
 
   sub parent_dir {
     return WebServer::DirIndex::File->new(
@@ -120,6 +129,11 @@ Returns the MIME type.
 =item mtime
 
 Returns the last-modified time string.
+
+=item to_html
+
+Returns an HTML table row string representing this file entry, with all
+fields HTML-escaped, ready for inclusion in a directory index page.
 
 =back
 
