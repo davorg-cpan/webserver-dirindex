@@ -7,7 +7,9 @@ class WebServer::DirIndex v0.0.1 {
   use Path::Tiny;
   use HTTP::Date;
   use Plack::MIME;
+  use Plack::Util;
   use URI::Escape;
+  use WebServer::DirIndex::CSS;
   use WebServer::DirIndex::File;
   use WebServer::DirIndex::HTML;
 
@@ -50,12 +52,17 @@ class WebServer::DirIndex v0.0.1 {
 
   method files { return @files }
 
-  method to_html ($path_info, $pretty = 0) {
-    return WebServer::DirIndex::HTML->new(
-      path_info => $path_info,
-      files     => \@files,
-      pretty    => $pretty,
-    )->render;
+  method render ($path_info, $pretty = 0) {
+    my $path = Plack::Util::encode_html("Index of $path_info");
+    my $files_html = join "\n", map {
+      my $f = $_;
+      sprintf WebServer::DirIndex::HTML->file_html,
+        map { Plack::Util::encode_html($_) }
+          ($f->url, $f->name, $f->size, $f->mime_type, $f->mtime);
+    } @files;
+    my $css = WebServer::DirIndex::CSS->new(pretty => $pretty)->css;
+    return sprintf WebServer::DirIndex::HTML->dir_html,
+      $path, $css, $path, $files_html;
   }
 }
 
@@ -80,7 +87,7 @@ WebServer::DirIndex - Directory index data for web server listings
   my @files = $di->files;
 
   # Generate an HTML directory index page
-  my $html = $di->to_html('/some/dir/', $pretty);
+  my $html = $di->render('/some/dir/', $pretty);
 
 =head1 DESCRIPTION
 
@@ -123,12 +130,12 @@ Returns the list of file entries for the directory. Each entry is a
 L<WebServer::DirIndex::File> object. The first entry is always the
 parent directory (C<../>).
 
-=item to_html($path_info, $pretty)
+=item render($path_info, $pretty)
 
-Generates and returns a complete HTML directory index page by delegating
-to L<WebServer::DirIndex::HTML>. C<$path_info> is the request path info
-used as the page title and heading. If C<$pretty> is true, an enhanced
-CSS stylesheet is used.
+Generates and returns a complete HTML directory index page using
+L<WebServer::DirIndex::HTML> for templates and L<WebServer::DirIndex::CSS>
+for styling. C<$path_info> is the request path info used as the page title
+and heading. If C<$pretty> is true, an enhanced CSS stylesheet is used.
 
 =back
 

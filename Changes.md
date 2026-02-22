@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Moved `render()` method from `WebServer::DirIndex::HTML` to `WebServer::DirIndex`.
+  `WebServer::DirIndex::HTML` now only provides `file_html` and `dir_html` template
+  class methods; rendering is performed directly by `WebServer::DirIndex::render()`.
+
 ### Added
 
 - New `WebServer::DirIndex::File` class to encapsulate directory entry data (url, name, size, mime_type, mtime).
