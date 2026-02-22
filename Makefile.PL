@@ -14,7 +14,7 @@ WriteMakefile(
     },
     PREREQ_PM => {
         'Path::Tiny'             => '0',
-        'Feature::Compat::Class' => '0',
+        'Feature::Compat::Class' => '0.07',
         'HTTP::Date'             => '0',
         'Plack'                  => '0',
         'URI::Escape'            => '0',

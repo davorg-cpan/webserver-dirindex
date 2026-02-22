@@ -7,17 +7,11 @@ class WebServer::DirIndex::File v0.0.1 {
   use Plack::Util;
   use WebServer::DirIndex::HTML;
 
-  field $url       :param;
-  field $name      :param;
-  field $size      :param;
-  field $mime_type :param;
-  field $mtime     :param;
-
-  method url       { return $url       }
-  method name      { return $name      }
-  method size      { return $size      }
-  method mime_type { return $mime_type }
-  method mtime     { return $mtime     }
+  field $url       :param :reader;
+  field $name      :param :reader;
+  field $size      :param :reader;
+  field $mime_type :param :reader;
+  field $mtime     :param :reader;
 
   method to_html {
     return sprintf WebServer::DirIndex::HTML->file_html,
