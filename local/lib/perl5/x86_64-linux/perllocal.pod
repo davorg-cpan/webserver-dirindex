@@ -1,0 +1,44 @@
+=head2 Sun Feb 22 10:40:28 2026: C<Module> L<Test::Pod|Test::Pod>
+
+=over 4
+
+=item *
+
+C<installed into: /home/runner/work/webserver-dirindex/webserver-dirindex/local/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 1.52>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
+=head2 Sun Feb 22 10:40:28 2026: C<Module> L<MIME::Types|MIME::Types>
+
+=over 4
+
+=item *
+
+C<installed into: /home/runner/work/webserver-dirindex/webserver-dirindex/local/lib/perl5>
+
+=item *
+
+C<LINKTYPE: dynamic>
+
+=item *
+
+C<VERSION: 2.30>
+
+=item *
+
+C<EXE_FILES: >
+
+=back
+
