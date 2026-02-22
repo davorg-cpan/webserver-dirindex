@@ -31,7 +31,9 @@ t/
   and declare classes with `class Foo::Bar vX.Y.Z { ... }`.
 - Fields are declared with `field $name :param;` (required) or
   `field $name :param = default;` (optional with default).
-- Accessor methods are declared with `method name { return $name }`.
+- Read-only accessors for fields are declared using the `:reader` attribute:
+  `field $name :param :reader;` or `field $name :reader = default;`.
+- Custom logic methods are declared with `method name { ... }`.
 - Class (static) methods use `sub` instead of `method`.
 - POD documentation follows `__END__` in every module file.
 
@@ -77,7 +79,8 @@ Runtime (declared in `Makefile.PL` under `PREREQ_PM`):
 | `Feature::Compat::Class` | Modern `class`/`field`/`method` syntax |
 | `Path::Tiny` | Filesystem path operations |
 | `HTTP::Date` | Formatting file modification times |
-| `Plack` | `Plack::MIME` for MIME type lookup; `Plack::Util::encode_html` for HTML escaping |
+| `HTML::Escape` | `escape_html` for HTML-escaping output |
+| `MIME::Types` | MIME type lookup by file extension |
 | `URI::Escape` | URI-escaping file names in URLs |
 
 Test (declared under `TEST_REQUIRES`):
@@ -114,6 +117,6 @@ is a test failure, coverage issue, or critic violation.
 - The `Feature::Compat::Class` module requires Perl ≥ 5.14 but the modern
   `class` keyword behaviour differs slightly across older Perls. The CI matrix
   covers 5.26–5.42; do not lower `MIN_PERL_VERSION` below 5.14 without testing.
-- `Plack::MIME->mime_type` is called with the full file path; it guesses the
-  MIME type from the file extension. Files without a recognised extension fall
-  back to `text/plain`.
+- `MIME::Types->mimeTypeOf` is called with the file path to guess the MIME type
+  from the file extension. Files without a recognised extension fall back to
+  `text/plain`.
