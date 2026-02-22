@@ -127,7 +127,7 @@ methods that return C<sprintf> format strings.
 =item css_class
 
 Optional. The class name to use for CSS stylesheets. Defaults to
-C<WebServer::DirIndex::CSS>. Must provide a C<new(pretty => $bool)>
+C<WebServer::DirIndex::CSS>. Must provide a C<new(pretty =E<gt> $bool)>
 constructor and a C<css> method that returns a stylesheet string.
 
 =back
