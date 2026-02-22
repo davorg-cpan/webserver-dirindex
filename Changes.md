@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Replaced `Plack::MIME` with `MIME::Types` for MIME type lookups.
-- Replaced `Plack::Util::encode_html` with an inline `_encode_html` sub,
-  removing the dependency on `Plack` entirely.
+- Replaced `Plack::Util::encode_html` with `HTML::Escape::escape_html` from the
+  `HTML::Escape` module, removing the dependency on `Plack` entirely.
 - Converted `sub file_html` and `sub dir_html` in `WebServer::DirIndex::HTML` from class
   methods (subs) to fields with `:reader`, making them instance-level read accessors.
 - Converted `sub standard_css` and `sub pretty_css` in `WebServer::DirIndex::CSS` from

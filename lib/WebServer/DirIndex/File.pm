@@ -7,14 +7,7 @@ my $html = WebServer::DirIndex::HTML->new; # shared singleton; templates are imm
 
 class WebServer::DirIndex::File v0.0.1 {
 
-  sub _encode_html {
-    my $str = shift;
-    $str =~ s/&/&amp;/g;
-    $str =~ s/>/&gt;/g;
-    $str =~ s/</&lt;/g;
-    $str =~ s/"/&quot;/g;
-    return $str;
-  }
+  use HTML::Escape qw(escape_html);
 
   field $url       :param :reader;
   field $name      :param :reader;
@@ -24,7 +17,7 @@ class WebServer::DirIndex::File v0.0.1 {
 
   method to_html {
     return sprintf $html->file_html,
-      map { _encode_html($_) }
+      map { escape_html($_) }
         ($url, $name, $size, $mime_type, $mtime);
   }
 

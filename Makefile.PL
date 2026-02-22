@@ -16,6 +16,7 @@ WriteMakefile(
         'Path::Tiny'             => '0',
         'Feature::Compat::Class' => '0.07',
         'HTTP::Date'             => '0',
+        'HTML::Escape'           => '0',
         'MIME::Types'            => '0',
         'URI::Escape'            => '0',
     },
