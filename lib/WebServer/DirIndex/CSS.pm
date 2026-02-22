@@ -6,12 +6,7 @@ class WebServer::DirIndex::CSS v0.0.1 {
 
   field $pretty :param = 0;
 
-  method css {
-    return $pretty ? pretty_css() : standard_css();
-  }
-
-  sub standard_css {
-    return <<CSS;
+  field $standard_css :reader = <<CSS;
 table {
   width: 100%;
 }
@@ -28,10 +23,8 @@ table {
   width: 15em;
 }
 CSS
-  }
 
-  sub pretty_css {
-    return <<CSS;
+  field $pretty_css :reader = <<CSS;
 body {
   color: #000;
   background-color: #fff; 
@@ -95,6 +88,9 @@ a:visited {
   text-decoration: none;
 }
 CSS
+
+  method css {
+    return $pretty ? $pretty_css : $standard_css;
   }
 }
 
@@ -147,6 +143,14 @@ attractive appearance. Defaults to false.
 Returns a CSS stylesheet suitable for directory listing pages. If the
 C<pretty> attribute is true, returns an enhanced stylesheet for a more
 attractive appearance; otherwise returns a minimal standard stylesheet.
+
+=item standard_css
+
+Returns the minimal standard CSS stylesheet string.
+
+=item pretty_css
+
+Returns the enhanced pretty CSS stylesheet string.
 
 =back
 

@@ -1,11 +1,12 @@
 use strict;
 use warnings;
 use Feature::Compat::Class;
+use Plack::Util;
+use WebServer::DirIndex::HTML;
+
+my $html = WebServer::DirIndex::HTML->new; # shared singleton; templates are immutable
 
 class WebServer::DirIndex::File v0.0.1 {
-
-  use Plack::Util;
-  use WebServer::DirIndex::HTML;
 
   field $url       :param :reader;
   field $name      :param :reader;
@@ -14,7 +15,7 @@ class WebServer::DirIndex::File v0.0.1 {
   field $mtime     :param :reader;
 
   method to_html {
-    return sprintf WebServer::DirIndex::HTML->file_html,
+    return sprintf $html->file_html,
       map { Plack::Util::encode_html($_) }
         ($url, $name, $size, $mime_type, $mtime);
   }
