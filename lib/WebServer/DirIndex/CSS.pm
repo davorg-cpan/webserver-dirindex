@@ -154,6 +154,16 @@ Returns the enhanced pretty CSS stylesheet string.
 
 =back
 
+=head1 SUBCLASSING
+
+You can subclass this module to provide custom stylesheets. Override
+C<standard_css>, C<pretty_css>, or both by declaring new fields with the
+C<:reader> attribute, and override the C<css> method if you need different
+selection logic.
+
+Pass your subclass name as the C<css_class> parameter when constructing
+L<WebServer::DirIndex>.
+
 =head1 AUTHOR
 
 Dave Cross E<lt>dave@perlhacks.comE<gt>

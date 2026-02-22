@@ -3,8 +3,6 @@ use warnings;
 use Feature::Compat::Class;
 use WebServer::DirIndex::HTML;
 
-my $html = WebServer::DirIndex::HTML->new; # shared singleton; templates are immutable
-
 class WebServer::DirIndex v0.0.1 {
 
   use Path::Tiny;
@@ -17,12 +15,16 @@ class WebServer::DirIndex v0.0.1 {
 
   my $mime_types = MIME::Types->new;
 
-  field $dir     :param;
-  field $dir_url :param;
+  field $dir        :param;
+  field $dir_url    :param;
+  field $html_class :param = 'WebServer::DirIndex::HTML';
+  field $css_class  :param = 'WebServer::DirIndex::CSS';
   field @files;
+  field $_html_obj;
 
   ADJUST {
-    @files = ( WebServer::DirIndex::File->parent_dir );
+    $_html_obj = $html_class->new;
+    @files = ( WebServer::DirIndex::File->parent_dir(html_class => $html_class) );
 
     my @children = map { $_->basename } path($dir)->children;
 
@@ -46,11 +48,12 @@ class WebServer::DirIndex v0.0.1 {
         : ($type_obj ? $type_obj->type : 'text/plain');
 
       push @files, WebServer::DirIndex::File->new(
-        url       => $url,
-        name      => $basename,
-        size      => $stat[7],
-        mime_type => $mime_type,
-        mtime     => HTTP::Date::time2str($stat[9]),
+        url        => $url,
+        name       => $basename,
+        size       => $stat[7],
+        mime_type  => $mime_type,
+        mtime      => HTTP::Date::time2str($stat[9]),
+        html_class => $html_class,
       );
     }
   }
@@ -60,8 +63,8 @@ class WebServer::DirIndex v0.0.1 {
   method to_html ($path_info, $pretty = 0) {
     my $path = escape_html("Index of $path_info");
     my $files_html = join "\n", map { $_->to_html } @files;
-    my $css = WebServer::DirIndex::CSS->new(pretty => $pretty)->css;
-    return sprintf $html->dir_html,
+    my $css = $css_class->new(pretty => $pretty)->css;
+    return sprintf $_html_obj->dir_html,
       $path, $css, $path, $files_html;
   }
 }
@@ -115,6 +118,18 @@ The filesystem path to the directory to index.
 
 The URL path corresponding to the directory (e.g. C</some/dir/>).
 Used to construct file URLs.
+
+=item html_class
+
+Optional. The class name to use for HTML templates. Defaults to
+C<WebServer::DirIndex::HTML>. Must provide C<file_html> and C<dir_html>
+methods that return C<sprintf> format strings.
+
+=item css_class
+
+Optional. The class name to use for CSS stylesheets. Defaults to
+C<WebServer::DirIndex::CSS>. Must provide a C<new(pretty => $bool)>
+constructor and a C<css> method that returns a stylesheet string.
 
 =back
 

@@ -46,4 +46,31 @@ my $special_row = $special->to_html;
 like $special_row, qr{&amp;},  'to_html() HTML-escapes & in URL';
 like $special_row, qr{&lt;},   'to_html() HTML-escapes < in name';
 
+# Custom html_class
+{
+  package My::HTML;
+  use strict;
+  use warnings;
+  use Feature::Compat::Class;
+  class My::HTML v0.0.1 {
+    field $file_html :reader = "CUSTOM:%s|%s|%s|%s|%s\n";
+  }
+}
+
+my $custom_file = WebServer::DirIndex::File->new(
+  url       => '/test/file.txt',
+  name      => 'file.txt',
+  size      => 1234,
+  mime_type => 'text/plain',
+  mtime     => 'Thu, 01 Jan 2026 00:00:00 GMT',
+  html_class => 'My::HTML',
+);
+my $custom_row = $custom_file->to_html;
+like $custom_row, qr{^CUSTOM:}, 'to_html() uses custom html_class template';
+like $custom_row, qr{file\.txt}, 'custom html_class template contains file name';
+
+my $custom_parent = WebServer::DirIndex::File->parent_dir(html_class => 'My::HTML');
+is $custom_parent->url,  '../',             'parent_dir() with html_class has correct URL';
+like $custom_parent->to_html, qr{^CUSTOM:}, 'parent_dir() uses custom html_class in to_html';
+
 done_testing;

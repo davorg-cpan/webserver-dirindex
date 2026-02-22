@@ -3,31 +3,37 @@ use warnings;
 use Feature::Compat::Class;
 use WebServer::DirIndex::HTML;
 
-my $html = WebServer::DirIndex::HTML->new; # shared singleton; templates are immutable
-
 class WebServer::DirIndex::File v0.0.1 {
 
   use HTML::Escape qw(escape_html);
 
-  field $url       :param :reader;
-  field $name      :param :reader;
-  field $size      :param :reader;
-  field $mime_type :param :reader;
-  field $mtime     :param :reader;
+  field $url        :param :reader;
+  field $name       :param :reader;
+  field $size       :param :reader;
+  field $mime_type  :param :reader;
+  field $mtime      :param :reader;
+  field $html_class :param = 'WebServer::DirIndex::HTML';
+  field $_html_obj;
+
+  ADJUST {
+    $_html_obj = $html_class->new;
+  }
 
   method to_html {
-    return sprintf $html->file_html,
+    return sprintf $_html_obj->file_html,
       map { escape_html($_) }
         ($url, $name, $size, $mime_type, $mtime);
   }
 
   sub parent_dir {
+    my ($class, %args) = @_;
     return WebServer::DirIndex::File->new(
       url       => '../',
       name      => 'Parent Directory',
       size      => '',
       mime_type => '',
       mtime     => '',
+      %args,
     );
   }
 }
@@ -92,6 +98,13 @@ string for the parent entry.
 
 The last-modified time as a formatted string, or an empty string for the
 parent entry.
+
+=item html_class
+
+Optional. The class name to use for HTML templates. Defaults to
+C<WebServer::DirIndex::HTML>. Must provide a C<file_html> method that
+returns a C<sprintf> format string with five C<%s> placeholders
+(url, name, size, mime_type, mtime).
 
 =back
 
