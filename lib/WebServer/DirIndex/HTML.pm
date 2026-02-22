@@ -4,8 +4,7 @@ use Feature::Compat::Class;
 
 class WebServer::DirIndex::HTML v0.0.1 {
 
-  sub file_html {
-    return <<'FILE';
+  field $file_html :reader = <<'FILE';
   <tr>
     <td class='name'><a href='%s'>%s</a></td>
     <td class='size'>%s</td>
@@ -13,10 +12,8 @@ class WebServer::DirIndex::HTML v0.0.1 {
     <td class='mtime'>%s</td>
   </tr>
 FILE
-  }
 
-  sub dir_html {
-    return <<'DIR';
+  field $dir_html :reader = <<'DIR';
 <html>
   <head>
     <title>%s</title>
@@ -45,7 +42,6 @@ FILE
   </body>
 </html>
 DIR
-  }
 }
 
 1;
@@ -60,8 +56,9 @@ WebServer::DirIndex::HTML - HTML rendering for directory index pages
 
   use WebServer::DirIndex::HTML;
 
-  my $file_tmpl = WebServer::DirIndex::HTML->file_html;
-  my $dir_tmpl  = WebServer::DirIndex::HTML->dir_html;
+  my $html      = WebServer::DirIndex::HTML->new;
+  my $file_tmpl = $html->file_html;
+  my $dir_tmpl  = $html->dir_html;
 
 =head1 DESCRIPTION
 

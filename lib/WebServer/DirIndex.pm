@@ -1,6 +1,9 @@
 use strict;
 use warnings;
 use Feature::Compat::Class;
+use WebServer::DirIndex::HTML;
+
+my $html = WebServer::DirIndex::HTML->new; # shared singleton; templates are immutable
 
 class WebServer::DirIndex v0.0.1 {
 
@@ -11,7 +14,6 @@ class WebServer::DirIndex v0.0.1 {
   use URI::Escape;
   use WebServer::DirIndex::CSS;
   use WebServer::DirIndex::File;
-  use WebServer::DirIndex::HTML;
 
   field $dir     :param;
   field $dir_url :param;
@@ -56,7 +58,7 @@ class WebServer::DirIndex v0.0.1 {
     my $path = Plack::Util::encode_html("Index of $path_info");
     my $files_html = join "\n", map { $_->to_html } @files;
     my $css = WebServer::DirIndex::CSS->new(pretty => $pretty)->css;
-    return sprintf WebServer::DirIndex::HTML->dir_html,
+    return sprintf $html->dir_html,
       $path, $css, $path, $files_html;
   }
 }
