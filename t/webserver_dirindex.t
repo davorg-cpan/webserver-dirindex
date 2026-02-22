@@ -45,4 +45,40 @@ ok defined $html_pretty, 'to_html(pretty) returns a value';
 like $html_pretty, qr{a:link}, 'to_html(pretty) uses pretty CSS';
 isnt $html, $html_pretty, 'pretty and non-pretty HTML differ';
 
+# Custom html_class and css_class
+{
+  package My::DirHTML;
+  use strict;
+  use warnings;
+  use Feature::Compat::Class;
+  class My::DirHTML v0.0.1 {
+    field $file_html :reader = "FILE:%s|%s|%s|%s|%s\n";
+    field $dir_html  :reader = "DIR:%s|%s|%s|%s\n";
+  }
+}
+
+{
+  package My::DirCSS;
+  use strict;
+  use warnings;
+  use Feature::Compat::Class;
+  class My::DirCSS v0.0.1 {
+    field $pretty :param = 0;
+    method css { return 'CUSTOM_CSS' }
+  }
+}
+
+my $di_custom = WebServer::DirIndex->new(
+  dir        => $dir,
+  dir_url    => '/test/',
+  html_class => 'My::DirHTML',
+  css_class  => 'My::DirCSS',
+);
+ok defined $di_custom, 'WebServer::DirIndex->new accepts html_class and css_class';
+
+my $html_custom = $di_custom->to_html('/test/', 0);
+like $html_custom, qr{^DIR:},        'to_html() uses custom html_class dir_html';
+like $html_custom, qr{CUSTOM_CSS},   'to_html() uses custom css_class';
+like $html_custom, qr{^FILE:}m,      'to_html() uses custom html_class file_html for rows';
+
 done_testing;

@@ -80,6 +80,30 @@ index page.
 
 =back
 
+=head1 SUBCLASSING
+
+You can subclass this module to provide custom HTML templates. Override
+C<file_html> and/or C<dir_html> in your subclass by declaring new fields
+with the C<:reader> attribute.
+
+Both templates are C<sprintf> format strings. The placeholders (C<%s>) are
+positional and must be preserved in the correct order:
+
+=over 4
+
+=item file_html placeholders (5 total, in order)
+
+C<url>, C<name>, C<size>, C<mime_type>, C<mtime>.
+
+=item dir_html placeholders (4 total, in order)
+
+Page C<title>, inline C<css>, page C<heading>, C<file rows>.
+
+=back
+
+Pass your subclass name as the C<html_class> parameter when constructing
+L<WebServer::DirIndex> or L<WebServer::DirIndex::File>.
+
 =head1 AUTHOR
 
 Dave Cross E<lt>dave@perlhacks.comE<gt>
