@@ -3,7 +3,7 @@ use warnings;
 use Feature::Compat::Class;
 use WebServer::DirIndex::HTML;
 
-class WebServer::DirIndex::File v0.0.2 {
+class WebServer::DirIndex::File v0.0.3 {
 
   use HTML::Escape qw(escape_html);
 
@@ -12,10 +12,16 @@ class WebServer::DirIndex::File v0.0.2 {
   field $size       :param :reader;
   field $mime_type  :param :reader;
   field $mtime      :param :reader;
+  field $icon       :param :reader = undef;
   field $html_class :param = 'WebServer::DirIndex::HTML';
   field $_html_obj = $html_class->new;
 
   method to_html {
+    if (defined $icon && $_html_obj->can('file_html_icons')) {
+      return sprintf $_html_obj->file_html_icons,
+        map { escape_html($_) }
+          ($icon, $url, $name, $size, $mime_type, $mtime);
+    }
     return sprintf $_html_obj->file_html,
       map { escape_html($_) }
         ($url, $name, $size, $mime_type, $mtime);
@@ -95,6 +101,12 @@ string for the parent entry.
 The last-modified time as a formatted string, or an empty string for the
 parent entry.
 
+=item icon
+
+Optional. The Font Awesome CSS class string used to render an icon for this
+entry (e.g. C<'fa-solid fa-file-pdf'>). Defaults to C<undef>, which causes
+C<to_html> to use the icon-less C<file_html> template.
+
 =item html_class
 
 Optional. The class name to use for HTML templates. Defaults to
@@ -134,6 +146,11 @@ Returns the MIME type.
 =item mtime
 
 Returns the last-modified time string.
+
+=item icon
+
+Returns the Font Awesome CSS class string for the icon, or C<undef> if icons
+are not enabled.
 
 =item to_html
 

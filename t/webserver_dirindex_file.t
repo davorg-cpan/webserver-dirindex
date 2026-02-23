@@ -17,6 +17,7 @@ is $file->name,      'file.txt',                    'name() returns correct valu
 is $file->size,      1234,                          'size() returns correct value';
 is $file->mime_type, 'text/plain',                  'mime_type() returns correct value';
 is $file->mtime,     'Thu, 01 Jan 2026 00:00:00 GMT', 'mtime() returns correct value';
+is $file->icon,      undef,                         'icon() defaults to undef';
 
 my $parent = WebServer::DirIndex::File->parent_dir;
 ok defined $parent, 'parent_dir() returns an object';
@@ -72,5 +73,24 @@ like $custom_row, qr{file\.txt}, 'custom html_class template contains file name'
 my $custom_parent = WebServer::DirIndex::File->parent_dir(html_class => 'My::HTML');
 is $custom_parent->url,  '../',             'parent_dir() with html_class has correct URL';
 like $custom_parent->to_html, qr{^CUSTOM:}, 'parent_dir() uses custom html_class in to_html';
+
+# File with icon set uses file_html_icons template
+my $icon_file = WebServer::DirIndex::File->new(
+  url       => '/test/file.pdf',
+  name      => 'file.pdf',
+  size      => 5678,
+  mime_type => 'application/pdf',
+  mtime     => 'Thu, 01 Jan 2026 00:00:00 GMT',
+  icon      => 'fa-solid fa-file-pdf',
+);
+is $icon_file->icon, 'fa-solid fa-file-pdf', 'icon() returns correct value';
+my $icon_row = $icon_file->to_html;
+like $icon_row, qr{fa-solid fa-file-pdf}, 'to_html() includes icon class when icon is set';
+like $icon_row, qr{class='icon'},          'to_html() includes icon cell when icon is set';
+like $icon_row, qr{file\.pdf},             'to_html() includes file name with icon';
+
+# Without icon, to_html falls back to file_html (no icon column)
+my $no_icon_row = $file->to_html;
+unlike $no_icon_row, qr{class='icon'}, 'to_html() with no icon uses icon-less template';
 
 done_testing;
