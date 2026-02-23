@@ -93,4 +93,57 @@ like $icon_row, qr{file\.pdf},             'to_html() includes file name with ic
 my $no_icon_row = $file->to_html;
 unlike $no_icon_row, qr{class='icon'}, 'to_html() with no icon uses icon-less template';
 
+# icons => 1 auto-derives icon from mime_type
+my $auto_icon_file = WebServer::DirIndex::File->new(
+  url       => '/test/file.pdf',
+  name      => 'file.pdf',
+  size      => 5678,
+  mime_type => 'application/pdf',
+  mtime     => 'Thu, 01 Jan 2026 00:00:00 GMT',
+  icons     => 1,
+);
+is $auto_icon_file->icon, 'fa-solid fa-file-pdf',
+  'icons => 1 auto-derives PDF icon from mime_type';
+like $auto_icon_file->to_html, qr{fa-solid fa-file-pdf},
+  'to_html() with icons => 1 includes auto-derived icon';
+
+my $auto_icon_dir = WebServer::DirIndex::File->new(
+  url       => 'subdir/',
+  name      => 'subdir/',
+  size      => '',
+  mime_type => 'directory',
+  mtime     => '',
+  icons     => 1,
+);
+is $auto_icon_dir->icon, 'fa-solid fa-folder',
+  'icons => 1 auto-derives folder icon for directories';
+
+my $auto_icon_parent = WebServer::DirIndex::File->parent_dir(icons => 1);
+is $auto_icon_parent->icon, 'fa-solid fa-arrow-up',
+  'parent_dir(icons => 1) auto-derives arrow-up icon';
+
+my $auto_icon_image = WebServer::DirIndex::File->new(
+  url       => '/test/photo.jpg',
+  name      => 'photo.jpg',
+  size      => 9999,
+  mime_type => 'image/jpeg',
+  mtime     => '',
+  icons     => 1,
+);
+is $auto_icon_image->icon, 'fa-solid fa-file-image',
+  'icons => 1 auto-derives image icon for image/* MIME type';
+
+# Explicit icon takes precedence over icons => 1
+my $explicit_icon_file = WebServer::DirIndex::File->new(
+  url       => '/test/file.txt',
+  name      => 'file.txt',
+  size      => 0,
+  mime_type => 'text/plain',
+  mtime     => '',
+  icon      => 'fa-solid fa-custom',
+  icons     => 1,
+);
+is $explicit_icon_file->icon, 'fa-solid fa-custom',
+  'explicit icon takes precedence over icons => 1 auto-derivation';
+
 done_testing;

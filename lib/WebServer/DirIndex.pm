@@ -3,7 +3,7 @@ use warnings;
 use Feature::Compat::Class;
 use WebServer::DirIndex::HTML;
 
-class WebServer::DirIndex v0.0.3 {
+class WebServer::DirIndex v0.0.4 {
 
   use Path::Tiny;
   use HTTP::Date;
@@ -15,47 +15,6 @@ class WebServer::DirIndex v0.0.3 {
 
   my $mime_types = MIME::Types->new;
 
-  my %ICON_MAP = (
-    'directory'                                                                    => 'fa-solid fa-folder',
-    ''                                                                             => 'fa-solid fa-arrow-up',
-    'text/plain'                                                                   => 'fa-solid fa-file-lines',
-    'text/html'                                                                    => 'fa-solid fa-file-code',
-    'text/css'                                                                     => 'fa-solid fa-file-code',
-    'text/csv'                                                                     => 'fa-solid fa-file-csv',
-    'text/javascript'                                                              => 'fa-solid fa-file-code',
-    'application/pdf'                                                              => 'fa-solid fa-file-pdf',
-    'application/msword'                                                           => 'fa-solid fa-file-word',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'     => 'fa-solid fa-file-word',
-    'application/vnd.ms-excel'                                                     => 'fa-solid fa-file-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'           => 'fa-solid fa-file-excel',
-    'application/vnd.ms-powerpoint'                                                => 'fa-solid fa-file-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation'   => 'fa-solid fa-file-powerpoint',
-    'application/javascript'                                                       => 'fa-solid fa-file-code',
-    'application/json'                                                             => 'fa-solid fa-file-code',
-    'application/xml'                                                              => 'fa-solid fa-file-code',
-    'application/zip'                                                              => 'fa-solid fa-file-zipper',
-    'application/x-tar'                                                            => 'fa-solid fa-file-zipper',
-    'application/gzip'                                                             => 'fa-solid fa-file-zipper',
-    'application/x-bzip2'                                                          => 'fa-solid fa-file-zipper',
-    'application/x-rar-compressed'                                                 => 'fa-solid fa-file-zipper',
-  );
-
-  my %ICON_PREFIX_MAP = (
-    'image/' => 'fa-solid fa-file-image',
-    'audio/' => 'fa-solid fa-file-audio',
-    'video/' => 'fa-solid fa-file-video',
-    'text/'  => 'fa-solid fa-file-lines',
-  );
-
-  sub _icon_class {
-    my ($mime_type) = @_;
-    return $ICON_MAP{$mime_type} if exists $ICON_MAP{$mime_type};
-    for my $prefix (keys %ICON_PREFIX_MAP) {
-      return $ICON_PREFIX_MAP{$prefix} if index($mime_type, $prefix) == 0;
-    }
-    return 'fa-solid fa-file';
-  }
-
   field $dir        :param;
   field $dir_url    :param;
   field $icons      :param = 1;
@@ -65,10 +24,9 @@ class WebServer::DirIndex v0.0.3 {
   field @files;
 
   ADJUST {
-    my $parent_icon = $icons ? _icon_class('') : undef;
     @files = ( WebServer::DirIndex::File->parent_dir(
       html_class => $html_class,
-      icon       => $parent_icon,
+      icons      => $icons,
     ) );
 
     my @children = map { $_->basename } path($dir)->children;
@@ -92,8 +50,6 @@ class WebServer::DirIndex v0.0.3 {
         ? 'directory'
         : ($type_obj ? $type_obj->type : 'text/plain');
 
-      my $icon = $icons ? _icon_class($mime_type) : undef;
-
       push @files, WebServer::DirIndex::File->new(
         url        => $url,
         name       => $basename,
@@ -101,7 +57,7 @@ class WebServer::DirIndex v0.0.3 {
         mime_type  => $mime_type,
         mtime      => HTTP::Date::time2str($stat[9]),
         html_class => $html_class,
-        icon       => $icon,
+        icons      => $icons,
       );
     }
   }
