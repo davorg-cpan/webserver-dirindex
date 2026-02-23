@@ -7,18 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.4] - 2026-02-23
-
-### Changed
-
-- Moved icon mapping logic (`%ICON_MAP`, `%ICON_PREFIX_MAP`, `_icon_class`) from
-  `WebServer::DirIndex` into `WebServer::DirIndex::File` where it belongs.
-- `WebServer::DirIndex::File` now accepts an `icons` boolean parameter (default: false).
-  When true, the icon is automatically derived from `mime_type` using the built-in
-  mapping; an explicitly supplied `icon` value always takes precedence.
-- `WebServer::DirIndex` now passes `icons => $icons` to `File->new` and
-  `parent_dir` instead of pre-computing the icon class itself.
-
 ## [0.0.3] - 2026-02-23
 
 ### Added
@@ -26,12 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Icons column in directory listing using Font Awesome 6 (CDN).
 - New `icons` parameter on `WebServer::DirIndex` (defaults to true) to enable
   or disable the icon column.
-- New `icon` parameter on `WebServer::DirIndex::File` holding the Font Awesome
-  CSS class string for the entry's icon.
+- New `icon` parameter on `WebServer::DirIndex::File` holding the explicit
+  Font Awesome CSS class string for the entry's icon.
+- New `icons` parameter on `WebServer::DirIndex::File` (defaults to false);
+  when true, the icon is automatically derived from `mime_type` using a
+  built-in mapping; an explicitly supplied `icon` value always takes precedence.
 - New `file_html_icons` and `dir_html_icons` templates in
   `WebServer::DirIndex::HTML` for icon-aware rendering.
-- Icon mapping covers: directories, parent directory, plain text, HTML/CSS/JS/JSON/XML
-  (code), CSV, PDF, Word, Excel, PowerPoint, images, audio, video, archives (zip/tar/gz/bz2/rar),
+- Icon mapping in `WebServer::DirIndex::File` covers: directories, parent
+  directory, plain text, HTML/CSS/JS/JSON/XML (code), CSV, PDF, Word, Excel,
+  PowerPoint, images, audio, video, archives (zip/tar/gz/bz2/rar),
   with a generic file icon as the fallback.
 - `.icon` CSS rule added to both standard and pretty stylesheets in
   `WebServer::DirIndex::CSS`.
