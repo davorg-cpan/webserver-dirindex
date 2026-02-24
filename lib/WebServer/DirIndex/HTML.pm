@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Feature::Compat::Class;
 
-class WebServer::DirIndex::HTML v0.0.4 {
+class WebServer::DirIndex::HTML v0.1.0 {
 
   field $icons :param = 0;
 

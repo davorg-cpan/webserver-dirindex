@@ -50,8 +50,20 @@ like $html, qr{fa-solid},        'to_html() with icons includes icon classes';
 my $di_pretty = WebServer::DirIndex->new(dir => $dir, dir_url => '/test/', pretty => 1);
 my $html_pretty = $di_pretty->to_html('/test/');
 ok defined $html_pretty, 'to_html(pretty) returns a value';
-like $html_pretty, qr{a:link}, 'to_html(pretty) uses pretty CSS';
+like $html_pretty, qr{a:link},      'to_html(pretty) uses pretty CSS';
+like $html_pretty, qr{font-awesome},'to_html(pretty) enables icons by default';
 isnt $html, $html_pretty, 'pretty and non-pretty HTML differ';
+
+# pretty => 1 with icons explicitly disabled stays icon-free
+my $di_pretty_no_icons = WebServer::DirIndex->new(
+  dir     => $dir,
+  dir_url => '/test/',
+  pretty  => 1,
+  icons   => 0,
+);
+my $html_pretty_no_icons = $di_pretty_no_icons->to_html('/test/');
+like   $html_pretty_no_icons, qr{a:link},       'pretty => 1, icons => 0 uses pretty CSS';
+unlike $html_pretty_no_icons, qr{font-awesome}, 'pretty => 1, icons => 0 omits Font Awesome';
 
 # Custom html_class and css_class
 {

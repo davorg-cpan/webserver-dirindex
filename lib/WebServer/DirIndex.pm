@@ -3,7 +3,7 @@ use warnings;
 use Feature::Compat::Class;
 use WebServer::DirIndex::HTML;
 
-class WebServer::DirIndex v0.0.4 {
+class WebServer::DirIndex v0.1.0 {
 
   use Path::Tiny;
   use HTTP::Date;
@@ -17,15 +17,19 @@ class WebServer::DirIndex v0.0.4 {
 
   field $dir        :param;
   field $dir_url    :param;
-  field $icons      :param = 1;
+  field $icons      :param = undef;
   field $pretty     :param = 0;
   field $html_class :param = 'WebServer::DirIndex::HTML';
   field $css_class  :param = 'WebServer::DirIndex::CSS';
-  field $_html_obj = $html_class->new(icons => $icons);
-  field $_css_obj  = $css_class->new(pretty => $pretty);
+  field $_html_obj;
+  field $_css_obj;
   field @files;
 
   ADJUST {
+    $icons = 1 if !defined($icons) && $pretty;  # pretty implies icons when unset
+    $icons //= 1;                                 # default to enabled otherwise
+    $_html_obj = $html_class->new(icons => $icons);
+    $_css_obj  = $css_class->new(pretty => $pretty);
     @files = ( WebServer::DirIndex::File->parent_dir(
       html_class => $html_class,
       icons      => $icons,
@@ -128,9 +132,12 @@ Used to construct file URLs.
 
 =item icons
 
-Optional. When true (the default), each file row includes a Font Awesome icon
-chosen based on the file's MIME type, and the rendered page links to the Font
-Awesome CDN stylesheet. Set to a false value to disable icons entirely.
+Optional. When true, each file row includes a Font Awesome icon chosen based on
+the file's MIME type, and the rendered page links to the Font Awesome CDN
+stylesheet. Set to a false value to disable icons entirely. If not supplied (or
+explicitly set to C<undef>), icons are enabled when C<pretty> is true and
+enabled by default otherwise. Pass C<0> to explicitly disable icons even when
+C<pretty> is true.
 
 =item pretty
 

@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.4] - 2026-02-24
+## [0.1.0] - 2026-02-24
 
 ### Changed
 
+- Bumped version to 0.1.0 to reflect the interface change introduced in the
+  previous release (removal of `$pretty` from `to_html`).
+- `$icons` default changed from `1` to `undef`. When `$icons` is not supplied
+  (or is explicitly `undef`), it is now automatically set to true when `$pretty`
+  is true, and defaults to enabled when `$pretty` is false (preserving
+  existing behaviour). Pass `icons => 0` to explicitly disable icons even
+  when `pretty => 1`.
 - `$pretty` is now a constructor parameter on `WebServer::DirIndex` (e.g.
   `WebServer::DirIndex->new(pretty => 1, ...)`) instead of a parameter to
   `to_html`. The `to_html` method signature is now `to_html($path_info)`.
