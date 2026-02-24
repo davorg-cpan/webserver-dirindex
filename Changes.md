@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-02-24
+
+### Changed
+
+- `$pretty` is now a constructor parameter on `WebServer::DirIndex` (e.g.
+  `WebServer::DirIndex->new(pretty => 1, ...)`) instead of a parameter to
+  `to_html`. The `to_html` method signature is now `to_html($path_info)`.
+- `$icons` is now also a constructor parameter on `WebServer::DirIndex::HTML`,
+  passed automatically by `WebServer::DirIndex` and `WebServer::DirIndex::File`
+  when creating HTML objects.
+- `file_html()` and `dir_html()` in `WebServer::DirIndex::HTML` are now
+  methods that inspect the `$icons` field and return the icon-aware or
+  standard template accordingly (consistent with how `css()` uses `$pretty`).
+- The `can('dir_html_icons')` and `can('file_html_icons')` runtime checks in
+  `WebServer::DirIndex` and `WebServer::DirIndex::File` have been removed;
+  icon selection is now encapsulated in `WebServer::DirIndex::HTML`.
+- `WebServer::DirIndex` now creates a single `CSS` object at construction time
+  (using the `$pretty` field) rather than creating a new one on each `to_html`
+  call.
+
 ## [0.0.3] - 2026-02-23
 
 ### Added

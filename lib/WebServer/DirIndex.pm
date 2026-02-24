@@ -3,7 +3,7 @@ use warnings;
 use Feature::Compat::Class;
 use WebServer::DirIndex::HTML;
 
-class WebServer::DirIndex v0.0.3 {
+class WebServer::DirIndex v0.0.4 {
 
   use Path::Tiny;
   use HTTP::Date;
@@ -18,9 +18,11 @@ class WebServer::DirIndex v0.0.3 {
   field $dir        :param;
   field $dir_url    :param;
   field $icons      :param = 1;
+  field $pretty     :param = 0;
   field $html_class :param = 'WebServer::DirIndex::HTML';
   field $css_class  :param = 'WebServer::DirIndex::CSS';
-  field $_html_obj = $html_class->new;
+  field $_html_obj = $html_class->new(icons => $icons);
+  field $_css_obj  = $css_class->new(pretty => $pretty);
   field @files;
 
   ADJUST {
@@ -64,14 +66,11 @@ class WebServer::DirIndex v0.0.3 {
 
   method files { return @files }
 
-  method to_html ($path_info, $pretty = 0) {
+  method to_html ($path_info) {
     my $path = escape_html("Index of $path_info");
     my $files_html = join "\n", map { $_->to_html } @files;
-    my $css = $css_class->new(pretty => $pretty)->css;
-    my $tmpl = ($icons && $_html_obj->can('dir_html_icons'))
-      ? $_html_obj->dir_html_icons
-      : $_html_obj->dir_html;
-    return sprintf $tmpl, $path, $css, $path, $files_html;
+    my $css = $_css_obj->css;
+    return sprintf $_html_obj->dir_html, $path, $css, $path, $files_html;
   }
 }
 
@@ -91,13 +90,14 @@ WebServer::DirIndex - Directory index data for web server listings
     dir     => '/path/to/dir',
     dir_url => '/some/dir/',
     icons   => 1,          # optional, defaults to 1 (enabled)
+    pretty  => 0,          # optional, defaults to 0 (standard CSS)
   );
 
   # Get the list of file entries
   my @files = $di->files;
 
   # Generate an HTML directory index page
-  my $html = $di->to_html('/some/dir/', $pretty);
+  my $html = $di->to_html('/some/dir/');
 
 =head1 DESCRIPTION
 
@@ -132,6 +132,11 @@ Optional. When true (the default), each file row includes a Font Awesome icon
 chosen based on the file's MIME type, and the rendered page links to the Font
 Awesome CDN stylesheet. Set to a false value to disable icons entirely.
 
+=item pretty
+
+Optional. When true, C<to_html> uses an enhanced CSS stylesheet for a more
+attractive appearance. Defaults to false.
+
 =item html_class
 
 Optional. The class name to use for HTML templates. Defaults to
@@ -158,12 +163,12 @@ Returns the list of file entries for the directory. Each entry is a
 L<WebServer::DirIndex::File> object. The first entry is always the
 parent directory (C<../>).
 
-=item to_html($path_info, $pretty)
+=item to_html($path_info)
 
 Generates and returns a complete HTML directory index page using
 L<WebServer::DirIndex::HTML> for templates and L<WebServer::DirIndex::CSS>
 for styling. C<$path_info> is the request path info used as the page title
-and heading. If C<$pretty> is true, an enhanced CSS stylesheet is used.
+and heading. The C<pretty> and C<icons> options are set at construction time.
 
 =back
 
