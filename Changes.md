@@ -9,83 +9,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2026-02-24
 
+### Breaking changes
+
+- The `pretty` option is now set when **creating** the `WebServer::DirIndex`
+  object, not when calling `to_html`. If you were passing a second argument to
+  `to_html`, move it to the constructor:
+
+  ```perl
+  # Before
+  my $html = $di->to_html('/some/dir/', 1);
+
+  # After
+  my $di   = WebServer::DirIndex->new(dir => $dir, dir_url => '/', pretty => 1);
+  my $html = $di->to_html('/some/dir/');
+  ```
+
 ### Changed
 
-- Bumped version to 0.1.0 to reflect the interface change introduced in the
-  previous release (removal of `$pretty` from `to_html`).
-- `$icons` default changed from `1` to `undef`. When `$icons` is not supplied
-  (or is explicitly `undef`), it is now automatically set to true when `$pretty`
-  is true, and defaults to enabled when `$pretty` is false (preserving
-  existing behaviour). Pass `icons => 0` to explicitly disable icons even
-  when `pretty => 1`.
-- `$pretty` is now a constructor parameter on `WebServer::DirIndex` (e.g.
-  `WebServer::DirIndex->new(pretty => 1, ...)`) instead of a parameter to
-  `to_html`. The `to_html` method signature is now `to_html($path_info)`.
-- `$icons` is now also a constructor parameter on `WebServer::DirIndex::HTML`,
-  passed automatically by `WebServer::DirIndex` and `WebServer::DirIndex::File`
-  when creating HTML objects.
-- `file_html()` and `dir_html()` in `WebServer::DirIndex::HTML` are now
-  methods that inspect the `$icons` field and return the icon-aware or
-  standard template accordingly (consistent with how `css()` uses `$pretty`).
-- The `can('dir_html_icons')` and `can('file_html_icons')` runtime checks in
-  `WebServer::DirIndex` and `WebServer::DirIndex::File` have been removed;
-  icon selection is now encapsulated in `WebServer::DirIndex::HTML`.
-- `WebServer::DirIndex` now creates a single `CSS` object at construction time
-  (using the `$pretty` field) rather than creating a new one on each `to_html`
-  call.
+- Enabling `pretty` now automatically enables icons as well. If you want the
+  enhanced CSS but no icons, pass `icons => 0` explicitly.
+- Icons remain enabled by default even when `pretty` is not set.
 
 ## [0.0.3] - 2026-02-23
 
 ### Added
 
-- Icons column in directory listing using Font Awesome 6 (CDN).
-- New `icons` parameter on `WebServer::DirIndex` (defaults to true) to enable
-  or disable the icon column.
-- New `icon` parameter on `WebServer::DirIndex::File` holding the explicit
-  Font Awesome CSS class string for the entry's icon.
-- New `icons` parameter on `WebServer::DirIndex::File` (defaults to false);
-  when true, the icon is automatically derived from `mime_type` using a
-  built-in mapping; an explicitly supplied `icon` value always takes precedence.
-- New `file_html_icons` and `dir_html_icons` templates in
-  `WebServer::DirIndex::HTML` for icon-aware rendering.
-- Icon mapping in `WebServer::DirIndex::File` covers: directories, parent
-  directory, plain text, HTML/CSS/JS/JSON/XML (code), CSV, PDF, Word, Excel,
-  PowerPoint, images, audio, video, archives (zip/tar/gz/bz2/rar),
-  with a generic file icon as the fallback.
-- `.icon` CSS rule added to both standard and pretty stylesheets in
-  `WebServer::DirIndex::CSS`.
+- **File-type icons** — each entry in the listing now shows a
+  [Font Awesome 6](https://fontawesome.com/) icon that matches the file's type
+  (document, image, video, archive, etc.). The required stylesheet is loaded
+  automatically from the Font Awesome CDN.
+- New `icons` parameter on `WebServer::DirIndex->new` (defaults to true).
+  Set `icons => 0` to produce a plain listing without icons.
 
 ## [0.0.2] - 2026-02-22
 
-### Changed
-
-- Replaced `Plack::MIME` with `MIME::Types` for MIME type lookups.
-- Replaced `Plack::Util::encode_html` with `HTML::Escape::escape_html` from the
-  `HTML::Escape` module, removing the dependency on `Plack` entirely.
-- Converted `sub file_html` and `sub dir_html` in `WebServer::DirIndex::HTML` from class
-  methods (subs) to fields with `:reader`, making them instance-level read accessors.
-- Converted `sub standard_css` and `sub pretty_css` in `WebServer::DirIndex::CSS` from
-  plain subs to fields with `:reader`, making them instance-level read accessors.
-- Updated callers in `WebServer::DirIndex`, `WebServer::DirIndex::File`, and tests to
-  use `->new->method` instead of `->method` for `WebServer::DirIndex::HTML`.
-- Moved `render()` method from `WebServer::DirIndex::HTML` to `WebServer::DirIndex::to_html`.
-- Added `to_html()` method to `WebServer::DirIndex::File` that renders a single
-  file entry as an HTML table row (with all fields HTML-escaped). The `render()`
-  method in `WebServer::DirIndex` now delegates to this method per file.
-
 ### Added
 
-- New `WebServer::DirIndex::File` class to encapsulate directory entry data (url, name, size, mime_type, mtime).
+- New `WebServer::DirIndex::File` class representing a single file entry in a
+  directory listing, with accessors for `url`, `name`, `size`, `mime_type`,
+  `mtime`, and `icon`.
+
+### Changed
+
+- The `Plack` dependency has been removed. The module now uses `MIME::Types`
+  for file-type detection and `HTML::Escape` for output escaping.
 
 ### Fixed
 
-- Correct copyright date.
+- Corrected the copyright year.
 
 ## [0.0.1] - 2026-02-21
 
 ### Added
 
-- Initial release of `WebServer::DirIndex`, `WebServer::DirIndex::HTML`, and `WebServer::DirIndex::CSS`.
+- Initial release of `WebServer::DirIndex`, `WebServer::DirIndex::HTML`, and
+  `WebServer::DirIndex::CSS`.
 
 [Unreleased]: https://github.com/davorg-cpan/webserver-dirindex/compare/v0.0.1...HEAD
 [0.0.1]: https://github.com/davorg-cpan/webserver-dirindex/releases/tag/v0.0.1
