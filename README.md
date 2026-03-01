@@ -1,7 +1,7 @@
 # WebServer::DirIndex
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/davorg-cpan/webserver-dirindex/perltest.yml)
-![CPAN Version](https://img.shields.io/cpan/v/WebServer::DirIndex)
+![CPAN Version](https://img.shields.io/cpan/v/WebServer-DirIndex)
 
 Directory index data for web server listings.
 
