@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Feature::Compat::Class;
 
-our $VERSION = '0.1.3';
+our $VERSION = '0.1.4';
 
 class WebServer::DirIndex::CSS {
 
